@@ -77,6 +77,8 @@ oms/fx/AddNewDistrictController.java
  oms.fx.AddNewDistrictController
 oms/model/Education_typeOfSchool_enum.java
  oms.model.Education_typeOfSchool_enum
+oms/fx/LoginPageController.java
+ oms.fx.LoginPageController
 oms/model/DistrictJoin.java
  oms.model.DistrictJoin
 oms/fx/AddNewZoneController.java
@@ -88,7 +90,5 @@ oms/fx/RegionsController.java
  oms.fx.RegionsController
 oms/model/Zone.java
  oms.model.Zone
-oms/fx/LoginPageController.java
- oms.fx.LoginPageController
 oms/fx/EducationalRecordsController.java
  oms.fx.EducationalRecordsController
