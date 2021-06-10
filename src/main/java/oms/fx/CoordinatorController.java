@@ -297,7 +297,7 @@ public class CoordinatorController implements Initializable {
 
         ShowDetailsController showDetailsController = loader.getController();
 
-        if (selectedRow != null){
+        if (selectedRow != null) {
             showDetailsController.populateTable(selectedRow.getId());
 
             stage.setTitle("Information");
@@ -345,9 +345,15 @@ public class CoordinatorController implements Initializable {
     }
 
     // returns true if its a valid name
-    private Boolean isValidTF (TextField tf) {
+    private Boolean isValidTF(TextField tf) {
         if (!isValidText(tf.getText())) return false;
-        else if(tf.getText().isEmpty()) return false;
+        else if (tf.getText().isEmpty()) return false;
+        else return tf.getText().length() < 255;
+    }
+
+    private Boolean isValidTF2(TextField tf) {
+        if (!isValidNumber(tf.getText())) return false;
+        else if (tf.getText().isEmpty()) return false;
         else return tf.getText().length() < 255;
     }
 
@@ -362,10 +368,10 @@ public class CoordinatorController implements Initializable {
         errorLabel.setTranslateY(tf.getLayoutY() + tf.getHeight());
         errorLabel.setTranslateX(tf.getLayoutX());
 
-        if(!isValidTF(tf)) {
+        if (!isValidTF(tf)) {
             tf.setStyle("-fx-text-box-border: red;");
             errorLabel.setText("Invalid " + tf.getId());
-            errorLabel.setTextFill(Color.web("red",0.75));
+            errorLabel.setTextFill(Color.web("red", 0.75));
 //            System.out.println("invalid");
 //            System.out.println(personalInfo.getChildren().indexOf(errorLabel));
             return false;
@@ -398,7 +404,7 @@ public class CoordinatorController implements Initializable {
     // same as validateTF except it work on existing labels
     private Boolean validateNativeTF(TextField tf, Label errorLabel) {
 
-        if(!isValidTF(tf)) {
+        if (!isValidTF(tf)) {
             tf.setStyle("-fx-text-box-border: red;");
             errorLabel.setText("Invalid " + tf.getId());
             errorLabel.setTextFill(Color.web("red",0.75));
@@ -443,7 +449,7 @@ public class CoordinatorController implements Initializable {
         if(toggleGroup.getUserData().toString().contains("Gender")) {
             errorLabel.setTranslateY(Female.getLayoutY() + Female.getHeight());
             errorLabel.setTranslateX(Female.getLayoutX());
-        } else if(toggleGroup.getUserData().toString().contains("SchoolType")){
+        } else if (toggleGroup.getUserData().toString().contains("SchoolType")) {
             errorLabel.setTranslateY(Public.getLayoutY() + Public.getHeight());
             errorLabel.setTranslateX(Public.getLayoutX());
         } else {
@@ -451,7 +457,7 @@ public class CoordinatorController implements Initializable {
             errorLabel.setTranslateX(0);
         }
 
-        if(toggleGroup.getSelectedToggle() == null) {
+        if (toggleGroup.getSelectedToggle() == null) {
 //            errorLabel.setText(toggleGroup.getUserData() + " can't be empty!");
             errorLabel.setText("Select " + toggleGroup.getUserData());
             errorLabel.setTextFill(Color.web("red",0.75));
@@ -533,15 +539,15 @@ public class CoordinatorController implements Initializable {
     // sets the validation for datepicker
     private Boolean isValidDate(DatePicker datePicker, Label errorLabel) {
         if (datePicker.getEditor().getText().length() > 0) {
-            if(checkDate(datePicker.getEditor().getText())) {
+            if (checkDate(datePicker.getEditor().getText())) {
 //                String[] tempDateValues = datePicker.getEditor().getText().split("/");
 //                // changed the date format from "MM/dd/yyyy" to "dd/MM/yyyy"
 //                String formattedInputDate =
 //                        tempDateValues[1]+"/"+tempDateValues[0]+"/"+tempDateValues[2];
-                if(isValidDate(datePicker.getEditor().getText())) {
+                if (isValidDate(datePicker.getEditor().getText())) {
                     datePicker.setStyle("-fx-text-box-border: red;");
                     errorLabel.setText("Invalid date format use (MM/dd/yyyy)");
-                    errorLabel.setTextFill(Color.web("red",0.75));
+                    errorLabel.setTextFill(Color.web("red", 0.75));
                 } else {
                     errorLabel.setText("");
                     return true;
@@ -549,12 +555,12 @@ public class CoordinatorController implements Initializable {
             } else {
                 datePicker.setStyle("-fx-text-box-border: red;");
                 errorLabel.setText("Enter a valid date");
-                errorLabel.setTextFill(Color.web("red",0.75));
+                errorLabel.setTextFill(Color.web("red", 0.75));
             }
         } else {
             datePicker.setStyle("-fx-text-box-border: red;");
             errorLabel.setText(datePicker.getId() + " can't be empty");
-            errorLabel.setTextFill(Color.web("red",0.75));
+            errorLabel.setTextFill(Color.web("red", 0.75));
         }
         return false;
     }
@@ -1034,7 +1040,7 @@ public class CoordinatorController implements Initializable {
     }
 
     // configuration file for the file choosers in the document section
-    private static void configureFileChooser(final FileChooser fileChooser){
+    private static void configureFileChooser(final FileChooser fileChooser) {
         fileChooser.setTitle("View Pictures");
         fileChooser.setInitialDirectory(
                 new File(System.getProperty("user.home"))
@@ -1083,6 +1089,25 @@ public class CoordinatorController implements Initializable {
     }
 
     public void searchOrphan(ActionEvent actionEvent) {
+        String searchTerm = searchTextField.getText();
+
+        Task<ObservableList<OrphanRow>> task = new Task<ObservableList<OrphanRow>>() {
+            @Override
+            protected ObservableList<OrphanRow> call() throws Exception {
+                List<Orphan> searchResults = Datasource.getInstance().searchAllOrphansByName(searchTerm);
+                List<OrphanRow> searchDisplayList = new ArrayList<>();
+                for (Orphan orphan :
+                        searchResults) {
+                    OrphanRow row = new OrphanRow(orphan);
+                    searchDisplayList.add(row);
+                }
+                return FXCollections.observableArrayList(searchDisplayList);
+            }
+        };
+        orphansTable.itemsProperty().bind(task.valueProperty());
+        new Thread(task).start();
+
+//        Stage searchResults = (Stage) searchTextField.getScene().getWindow();
     }
 
     public void backToVillages(ActionEvent actionEvent) throws IOException {

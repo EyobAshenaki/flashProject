@@ -12,6 +12,8 @@ oms/fx/ZonesController.java
  oms.fx.ZonesController
  oms.fx.ZonesController$1
  oms.fx.ZonesController$2
+oms/model/Zone.java
+ oms.model.Zone
 oms/model/EducationalRecord_semester_enum.java
  oms.model.EducationalRecord_semester_enum
 oms/model/District.java
@@ -19,6 +21,9 @@ oms/model/District.java
 oms/fx/CoordinatorController.java
  oms.fx.CoordinatorController
  oms.fx.CoordinatorController$1
+oms/fx/RegionsController.java
+ oms.fx.GetAllRegionsTask
+ oms.fx.RegionsController
 oms/model/Guardian_nationality_enum.java
  oms.model.Guardian_nationality_enum
 oms/model/EducationalRecord.java
@@ -29,6 +34,8 @@ oms/fx/DistrictsController.java
  oms.fx.DistrictsController
  oms.fx.DistrictsController$1
  oms.fx.DistrictsController$2
+oms/fx/LoginPageController.java
+ oms.fx.LoginPageController
 oms/fx/ShowDetailsController.java
  oms.fx.ShowDetailsController
 oms/model/EducationalRecord_yearDivision_enum.java
@@ -41,6 +48,10 @@ oms/fx/VillagesController.java
  oms.fx.VillagesController
  oms.fx.VillagesController$1
  oms.fx.VillagesController$2
+oms/fx/ZonesController.java
+ oms.fx.ZonesController
+ oms.fx.ZonesController$1
+ oms.fx.ZonesController$2
 oms/model/Orphan.java
  oms.model.Orphan
 oms/model/Father.java
@@ -84,3 +95,15 @@ oms/model/Zone.java
  oms.model.Zone
 oms/fx/LoginPageController.java
  oms.fx.LoginPageController
+oms/fx/DistrictsController.java
+ oms.fx.DistrictsController
+ oms.fx.DistrictsController$1
+ oms.fx.DistrictsController$2
+oms/fx/CoordinatorController.java
+ oms.fx.CoordinatorController
+ oms.fx.CoordinatorController$1
+ oms.fx.CoordinatorController$2
+oms/fx/VillagesController.java
+ oms.fx.VillagesController
+ oms.fx.VillagesController$1
+ oms.fx.VillagesController$2
