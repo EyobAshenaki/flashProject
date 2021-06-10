@@ -10,6 +10,10 @@ import oms.model.Datasource;
 import oms.model.Orphan;
 import org.w3c.dom.ls.LSOutput;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -58,7 +62,16 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, SQLException {
+//        Datasource.getInstance().open();
+//        File file = new File("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2.jpg");
+////        FileInputStream stream = new FileInputStream(file);
+////        System.out.println(file.getAbsolutePath());
+////        String sql = "update father set deathCertificate=load_file (?) where id=?";
+////        Datasource.getInstance().inputImageToDB(file, 9, sql);
+//        int x = Datasource.getInstance().insertFather("sixth", "last", "2013-02-04",
+//                "cause of death", "2013-09-04", file);
+//        System.out.println(x);
         launch(args);
     }
     

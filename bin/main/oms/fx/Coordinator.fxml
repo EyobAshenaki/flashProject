@@ -225,7 +225,7 @@
                             </ScrollPane>
                         </TitledPane>
                         <!-- document info -->
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" text="Documents and Photos">
+                        <TitledPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" text="Documents and Photos">
                             <AnchorPane fx:id="documentInfo" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                 <GridPane layoutX="27.6" prefHeight="382.0" prefWidth="877.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="2.0">
                                     <columnConstraints>
@@ -251,25 +251,25 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#birthCertificateChooser" scaleZ="2.0" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                        <Button fx:id="birthCertificateButton" mnemonicParsing="false" onAction="#birthCertificateChooser" scaleZ="2.0" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                         <Label text="Orphan Birth Certificate*" GridPane.rowIndex="2" />
-                                        <TextField promptText="Upload Birth Certificate" GridPane.rowIndex="3" />
+                                        <TextField fx:id="birthCertificateTF" promptText="Upload Birth Certificate" GridPane.rowIndex="3" />
                                         <Button mnemonicParsing="false" onAction="#portraitPhotoChooser" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                         <Label text="Orphan Portrait Photo*" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                        <TextField promptText="Upload Portrait Photo" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                        <TextField fx:id="portraitPhotoTF" promptText="Upload Portrait Photo" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                         <Label text="Orphan Long Photo*" GridPane.rowIndex="5" />
                                         <Button mnemonicParsing="false" onAction="#longPhotoChooser" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                        <TextField promptText="Upload Long Photo" GridPane.rowIndex="6" />
+                                        <TextField fx:id="longPhotoTF" promptText="Upload Long Photo" GridPane.rowIndex="6" />
                                         <Button mnemonicParsing="false" onAction="#guardianConfirmationLetterChooser" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                         <Label text="Father Death Certificate*" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                                        <TextField promptText="Upload Death Certificate" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                                        <TextField fx:id="fatherDeathCertificateTF" promptText="Upload Death Certificate" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                         <Button mnemonicParsing="false" onAction="#fatherDeathCertificateChooser" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="6" />
                                         <Label text="Guardian Confirmation Letter*" GridPane.rowIndex="8" />
-                                        <TextField promptText="Upload Confirmation Letter" GridPane.rowIndex="9" />
+                                        <TextField fx:id="guardianConfirmationLetterTF" promptText="Upload Confirmation Letter" GridPane.rowIndex="9" />
                                         <Label text="Guardian ID Card*" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                                         <Button mnemonicParsing="false" onAction="#guardianIDCardChooser" text="Browse" GridPane.columnIndex="3" GridPane.rowIndex="9" />
-                                        <TextField promptText="Upload ID Card" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-                                        <Button mnemonicParsing="false" text="Submit" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="12" />
+                                        <TextField fx:id="guardianIDCardTF" promptText="Upload ID Card" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+                                        <Button mnemonicParsing="false" onAction="#submitOrphanRegistrationForm" text="Submit" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="12" />
                                     </children>
                                 </GridPane>
                             </AnchorPane>

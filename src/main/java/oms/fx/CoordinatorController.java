@@ -40,6 +40,24 @@ import java.util.logging.Logger;
 
 public class CoordinatorController implements Initializable {
 
+    private Village village;
+
+    public Village getVillage() {
+        return village;
+    }
+
+    public void setVillage(Village village) {
+        this.village = village;
+    }
+
+    public File birthCertificateStream;
+    public File portraitPhotoStream;
+    public File longPhotoStream;
+    public File fatherDeathCertificateStream;
+    public File guardianConfirmationLetterStream;
+    public File guardianIDCardStream;
+
+
     public TextField searchTextField;
     public Button searchButton;
     public TextField childName;
@@ -134,6 +152,13 @@ public class CoordinatorController implements Initializable {
     public Label motherDateOfBirthError;
     public Label guardianGenderError;
     public ScrollPane familyInfo;
+    public Button birthCertificateButton;
+    public TextField birthCertificateTF;
+    public TextField portraitPhotoTF;
+    public TextField longPhotoTF;
+    public TextField fatherDeathCertificateTF;
+    public TextField guardianConfirmationLetterTF;
+    public TextField guardianIDCardTF;
 
     ToggleGroup Gender;
     ToggleGroup SchoolType;
@@ -309,6 +334,16 @@ public class CoordinatorController implements Initializable {
         return true;
     }
 
+    public static Boolean isValidNumber(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (!(c >= 48 && c <= 57)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // returns true if its a valid name
     private Boolean isValidTF (TextField tf) {
         if (!isValidText(tf.getText())) return false;
@@ -316,8 +351,14 @@ public class CoordinatorController implements Initializable {
         else return tf.getText().length() < 255;
     }
 
+    private Boolean isValidTF2 (TextField tf) {
+        if (!isValidNumber(tf.getText())) return false;
+        else if(tf.getText().isEmpty()) return false;
+        else return tf.getText().length() < 255;
+    }
+
     // adds a label under the text field if the entered value is not valid
-    private void validateTF(TextField tf, Label errorLabel) {
+    private Boolean validateTF(TextField tf, Label errorLabel) {
         errorLabel.setTranslateY(tf.getLayoutY() + tf.getHeight());
         errorLabel.setTranslateX(tf.getLayoutX());
 
@@ -327,6 +368,7 @@ public class CoordinatorController implements Initializable {
             errorLabel.setTextFill(Color.web("red",0.75));
 //            System.out.println("invalid");
 //            System.out.println(personalInfo.getChildren().indexOf(errorLabel));
+            return false;
         } else {
 //            tf.setStyle("-fx-background-color: linear-gradient(to bottom, " +
 //                    "derive(-fx-text-box-border, -10%), -fx-text-box-border)," +
@@ -349,16 +391,18 @@ public class CoordinatorController implements Initializable {
 
 //            System.out.println("valid");
 //            System.out.println(personalInfo.getChildren().indexOf(errorLabel));
+            return true;
         }
     }
 
     // same as validateTF except it work on existing labels
-    private void validateNativeTF(TextField tf, Label errorLabel) {
+    private Boolean validateNativeTF(TextField tf, Label errorLabel) {
 
         if(!isValidTF(tf)) {
             tf.setStyle("-fx-text-box-border: red;");
             errorLabel.setText("Invalid " + tf.getId());
             errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
         } else {
             tf.setStyle("-fx-background-color: linear-gradient(to bottom, " +
                     "derive(-fx-text-box-border, -10%), -fx-text-box-border)," +
@@ -369,11 +413,33 @@ public class CoordinatorController implements Initializable {
 //            personalInfo.getChildren().remove(errorLabel);
 //            errorLabel.setText("Valid " + tf.getId());
 //            errorLabel.setTextFill(Color.web("green",0));
+            return true;
+        }
+    }
+
+    private Boolean validateNativeTF2(TextField tf, Label errorLabel) {
+
+        if(!isValidTF2(tf)) {
+            tf.setStyle("-fx-text-box-border: red;");
+            errorLabel.setText("Invalid " + tf.getId());
+            errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
+        } else {
+            tf.setStyle("-fx-background-color: linear-gradient(to bottom, " +
+                    "derive(-fx-text-box-border, -10%), -fx-text-box-border)," +
+                    " linear-gradient(from 0px 0px to 0px 5px, derive" +
+                    "(-fx-control-inner-background, -9%), -fx-control-inner-background);" +
+                    "-fx-background-insets: 0, 1; -fx-background-radius: 3, 2;");
+            errorLabel.setText("");
+//            personalInfo.getChildren().remove(errorLabel);
+//            errorLabel.setText("Valid " + tf.getId());
+//            errorLabel.setTextFill(Color.web("green",0));
+            return true;
         }
     }
 
     // adds a label under the radio button if nothing is selected
-    private void validateRB(ToggleGroup toggleGroup, Label errorLabel) {
+    private Boolean validateRB(ToggleGroup toggleGroup, Label errorLabel) {
         if(toggleGroup.getUserData().toString().contains("Gender")) {
             errorLabel.setTranslateY(Female.getLayoutY() + Female.getHeight());
             errorLabel.setTranslateX(Female.getLayoutX());
@@ -389,45 +455,54 @@ public class CoordinatorController implements Initializable {
 //            errorLabel.setText(toggleGroup.getUserData() + " can't be empty!");
             errorLabel.setText("Select " + toggleGroup.getUserData());
             errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
         } else {
 //            personalInfo.getChildren().remove(errorLabel);
             errorLabel.setText("");
+            return true;
         }
 
 //        System.out.println(toggleGroup.getUserData());
     }
 
     // same as validateRB except it work on existing labels
-    private void validateNativeRB(ToggleGroup toggleGroup, Label errorLabel) {
+    private Boolean validateNativeRB(ToggleGroup toggleGroup, Label errorLabel) {
         if(toggleGroup.getSelectedToggle() == null) {
 //            errorLabel.setText(toggleGroup.getUserData() + " can't be empty!");
             errorLabel.setText("Select " + toggleGroup.getUserData());
             errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
         } else {
             errorLabel.setText("");
+            return true;
         }
     }
 
     // add a label under the combobox if nothing is selected
-    private void validateCB(ComboBox<String> comboBox, Label errorLabel) {
+    private Boolean validateCB(ComboBox<String> comboBox, Label errorLabel) {
         errorLabel.setTranslateY(comboBox.getLayoutY() + comboBox.getHeight());
         errorLabel.setTranslateX(comboBox.getLayoutX());
 
         if (comboBox.getSelectionModel().isEmpty()) {
             errorLabel.setText("Select " + comboBox.getUserData());
             errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
         } else {
-            personalInfo.getChildren().remove(errorLabel);
+//            personalInfo.getChildren().remove(errorLabel);
+            errorLabel.setText("");
+            return true;
         }
     }
 
     // same as validateCB except it work on existing labels
-    private void validateNativeCB(ComboBox<String> comboBox, Label errorLabel) {
+    private Boolean validateNativeCB(ComboBox<String> comboBox, Label errorLabel) {
         if (comboBox.getSelectionModel().isEmpty()) {
             errorLabel.setText("Select " + comboBox.getUserData());
             errorLabel.setTextFill(Color.web("red",0.75));
+            return false;
         } else {
             errorLabel.setText("");
+            return true;
         }
     }
 
@@ -456,7 +531,7 @@ public class CoordinatorController implements Initializable {
     }
 
     // sets the validation for datepicker
-    private void isValidDate(DatePicker datePicker, Label errorLabel) {
+    private Boolean isValidDate(DatePicker datePicker, Label errorLabel) {
         if (datePicker.getEditor().getText().length() > 0) {
             if(checkDate(datePicker.getEditor().getText())) {
 //                String[] tempDateValues = datePicker.getEditor().getText().split("/");
@@ -469,6 +544,7 @@ public class CoordinatorController implements Initializable {
                     errorLabel.setTextFill(Color.web("red",0.75));
                 } else {
                     errorLabel.setText("");
+                    return true;
                 }
             } else {
                 datePicker.setStyle("-fx-text-box-border: red;");
@@ -480,19 +556,53 @@ public class CoordinatorController implements Initializable {
             errorLabel.setText(datePicker.getId() + " can't be empty");
             errorLabel.setTextFill(Color.web("red",0.75));
         }
+        return false;
     }
 
     // sets the label to a position below the datepicker which itr represents
-    private void validateDP(DatePicker datePicker, Label errorLabel) {
+    private Boolean validateDP(DatePicker datePicker, Label errorLabel) {
         errorLabel.setLayoutX(datePicker.getLayoutX());
         errorLabel.setLayoutY(datePicker.getLayoutY() + datePicker.getHeight());
 
-        isValidDate(datePicker, errorLabel);
+        return isValidDate(datePicker, errorLabel);
     }
 
     // same as validateDP except it work on existing labels
-    private void validateNativeDP(DatePicker datePicker, Label errorLabel) {
-        isValidDate(datePicker, errorLabel);
+    private Boolean validateNativeDP(DatePicker datePicker, Label errorLabel) {
+        return isValidDate(datePicker, errorLabel);
+    }
+
+    private Boolean validateFC(TextField tf) {
+        if(!isValidTF(tf)) {
+            tf.setStyle("-fx-text-box-border: red;");
+//            errorLabel.setText("Invalid " + tf.getId());
+//            errorLabel.setTextFill(Color.web("red",0.75));
+//            System.out.println("invalid");
+//            System.out.println(personalInfo.getChildren().indexOf(errorLabel));
+            return false;
+        } else {
+//            tf.setStyle("-fx-background-color: linear-gradient(to bottom, " +
+//                    "derive(-fx-text-box-border, -10%), -fx-text-box-border)," +
+//                    " linear-gradient(from 0px 0px to 0px 5px, derive" +
+//                    "(-fx-control-inner-background, -9%), -fx-control-inner-background);" +
+//                    "-fx-background-insets: 0, 1; -fx-background-radius: 3, 2; " +
+//                    "-fx-text-box-border: rgb(0,255,0);");
+            tf.setStyle("-fx-background-color: linear-gradient(to bottom, " +
+                    "derive(-fx-text-box-border, -10%), -fx-text-box-border)," +
+                    " linear-gradient(from 0px 0px to 0px 5px, derive" +
+                    "(-fx-control-inner-background, -9%), -fx-control-inner-background);" +
+                    "-fx-background-insets: 0, 1; -fx-background-radius: 3, 2;");
+//            personalInfo.getChildren().remove(errorLabel);
+            // -----------------------------------------------
+//            errorLabel.setText("Valid " + tf.getId());
+//            errorLabel.setTextFill(Color.web("green",0));
+            // -----------------------------------------------
+//            errorLabel.setText("");
+
+            return true;
+//            System.out.println("valid");
+//            System.out.println(personalInfo.getChildren().indexOf(errorLabel));
+        }
     }
 
     // handles the personal info next button
@@ -505,266 +615,422 @@ public class CoordinatorController implements Initializable {
 //            fatherName.setStyle("-fx-background-color: -fx-control-inner-background;");
         // -----------------------------------------------------------------------
 
-        validateTF(childName, childNameError);
-        orphan.setFirstName(childName.getText());
-        validateTF(fatherName, fatherNameError);
-        orphan.getFather().setFirstName(fatherName.getText());
-        validateTF(grandfatherName, grandFatherError);
-        orphan.getFather().setLastName(grandfatherName.getText());
-        validateTF(childPlaceOfBirth, placeOfBirthError);
-        orphan.setPlaceOfBirth(childPlaceOfBirth.getText());
-        validateTF(spokenLanguages, spokenLanguagesError);
-        orphan.setSpokenLanguages(spokenLanguages.getText());
-        validateTF(childHealthDescription, healthDescriptionError);
-        orphan.setHealthDescription(childHealthDescription.getText());
-        validateTF(childSchoolName, schoolNameError);
-        orphan.getEducation().setSchoolName(childSchoolName.getText());
-        validateTF(childReason, reasonError);
-        orphan.getEducation().setReason(childReason.getText());
+        if (
+        validateTF(childName, childNameError) &&
+        validateTF(fatherName, fatherNameError) &&
+        validateTF(grandfatherName, grandFatherError) &&
+        validateRB(Gender, genderError) &&
+        validateDP(childDateOfBirth, dateOfBirthError) &&
+        validateTF(childPlaceOfBirth, placeOfBirthError) &&
+        validateTF(spokenLanguages, spokenLanguagesError) &&
+        validateTF(childHealthDescription, healthDescriptionError) &&
+        validateCB(childPsychologicalStatus, psychologicalStatusError) &&
+        validateCB(childEnrollmentStatus, enrollmentStatusError) &&
+        validateTF(childSchoolName, schoolNameError) &&
+        validateRB(SchoolType, schoolTypeError) &&
+        validateCB(childEducationLevel, educationLevelError) &&
+        validateCB(childGradeYear, gradeYearError) &&
+        validateTF(childReason, reasonError)
+        ) {
+            orphan.setFirstName(childName.getText());
 
-        validateRB(Gender, genderError);
-        validateRB(SchoolType, schoolTypeError);
+            orphan.getFather().setFirstName(fatherName.getText());
 
-        validateCB(childPsychologicalStatus, psychologicalStatusError);
-        orphan.setPsychologicalStatus(
+            orphan.getFather().setLastName(grandfatherName.getText());
+
+            orphan.setPlaceOfBirth(childPlaceOfBirth.getText());
+
+            orphan.setSpokenLanguages(spokenLanguages.getText());
+
+            orphan.setHealthDescription(childHealthDescription.getText());
+
+            orphan.getEducation().setSchoolName(childSchoolName.getText());
+
+            orphan.getEducation().setReason(childReason.getText());
+
+            orphan.setGender(Male.isSelected() ? Gender_enum.M : Gender_enum.F);
+
+            orphan.getEducation().setTypeOfSchool(Public.isSelected() ?
+                                              Education_typeOfSchool_enum.PUBLIC :
+                                              Education_typeOfSchool_enum.PRIVATE);
+
+            orphan.setPsychologicalStatus(
                 childPsychologicalStatus.getSelectionModel().getSelectedItem() == "Normal" ? Orphan_psychologicalStatus_enum.NORMAL :
                         childPsychologicalStatus.getSelectionModel().getSelectedItem() == "Isolated" ? Orphan_psychologicalStatus_enum.ISOLATED :
                                 childPsychologicalStatus.getSelectionModel().getSelectedItem() == "Stressed" ? Orphan_psychologicalStatus_enum.STRESSED :
                                         childPsychologicalStatus.getSelectionModel().getSelectedItem() == "Sociable" ? Orphan_psychologicalStatus_enum.OVERLYSOCIABLE :
                                                  Orphan_psychologicalStatus_enum.UNSOCIABLE
                 );
-        validateCB(childEnrollmentStatus, enrollmentStatusError);
-        orphan.getEducation().setEnrollmentStatus(childEnrollmentStatus.getSelectionModel().getSelectedItem() == "Enrolled" ? Education_enrollmentStatus_enum.ENROLLED:
+
+            orphan.getEducation().setEnrollmentStatus(childEnrollmentStatus.getSelectionModel().getSelectedItem() == "Enrolled" ? Education_enrollmentStatus_enum.ENROLLED:
                         childEnrollmentStatus.getSelectionModel().getSelectedItem() == "Unenrolled" ? Education_enrollmentStatus_enum.UNENROLLED:
                                  Education_enrollmentStatus_enum.DROPPEDOUT
                 );
-        validateCB(childEducationLevel, educationLevelError);
-        orphan.getEducation().setLevel(childEducationLevel.getSelectionModel().getSelectedItem() == "ReligiousEducation" ? Education_level_enum.RELIGIOUSEDUCATION :
+
+            orphan.getEducation().setLevel(childEducationLevel.getSelectionModel().getSelectedItem() == "ReligiousEducation" ? Education_level_enum.RELIGIOUSEDUCATION :
                         childEducationLevel.getSelectionModel().getSelectedItem() == "Preschool" ? Education_level_enum.PRESCHOOL :
                                 childEducationLevel.getSelectionModel().getSelectedItem() == "Gradeschool" ? Education_level_enum.GRADESCHOOL :
                                         childEducationLevel.getSelectionModel().getSelectedItem() == "Undergraduate" ? Education_level_enum.UNDERGRADUATE :
                                                 childEducationLevel.getSelectionModel().getSelectedItem() == "Postgraduate" ? Education_level_enum.POSTGRADUATE :
                                                         Education_level_enum.N_A
                 );
-        validateCB(childGradeYear, gradeYearError);
-        orphan.getEducation().setYear(childGradeYear.getSelectionModel().getSelectedItem());
 
-        validateDP(childDateOfBirth, dateOfBirthError);
-        orphan.setDateOfBirth(childDateOfBirth.getEditor().getText());
+            orphan.getEducation().setYear(childGradeYear.getSelectionModel().getSelectedItem());
+
+            orphan.setDateOfBirth(childDateOfBirth.getEditor().getText());
+
+        } else {
+            return;
+        }
+
+      System.out.println(
+                        orphan.getFirstName()+","+
+                        orphan.getFather().getFirstName()+ ","+
+                        orphan.getFather().getLastName()+","+
+                        orphan.getPlaceOfBirth()+","+
+                        orphan.getHealthDescription()+","+
+                        orphan.getEducation().getReason()+","+
+                        orphan.getEducation().getSchoolName()+","+
+                        orphan.getPsychologicalStatus()+","+
+                        orphan.getEducation().getEnrollmentStatus()+","+
+                        orphan.getEducation().getLevel()+","+
+                        orphan.getEducation().getYear()+","+
+                        orphan.getDateOfBirth()+","+
+                        orphan.getGender()+","+
+                        orphan.getEducation().getTypeOfSchool()
+
+        );
     }
 
     // handles the family info next button
     public void famInfoNextHandler(ActionEvent actionEvent) {
-        validateNativeTF(fatherCauseOfDeath, fatherCauseOfDeathError);
-        orphan.getFather().setCauseOfDeath(fatherCauseOfDeath.getText());
-        validateNativeTF(motherFirstName, motherFirstNameError);
-        orphan.getMother().setFirstName(motherFirstName.getText());
-        validateNativeTF(motherMiddleName, motherMiddleNameError);
-        orphan.getMother().setMiddleName(motherMiddleName.getText());
-        validateNativeTF(motherLastName, motherLastNameError);
-        orphan.getMother().setLastName(motherLastName.getText());
-        validateNativeTF(motherCauseOfDeath, motherCauseOfDeathError);
-        orphan.getMother().setCauseOfDeath(motherCauseOfDeath.getText());
-        validateNativeTF(motherMobileNumber, motherMobileNumberError);
-        orphan.getMother().setMobileNumber(motherMobileNumber.getText());
-        validateNativeTF(motherMonthlyIncome, motherMonthlyIncomeError);
-        orphan.getMother().setMonthlyIncome(Float.parseFloat(motherMonthlyIncome.getText()));
-        validateNativeTF(motherMonthlyExpense, motherMonthlyExpenseError);
-        orphan.getMother().setMonthlyExpense(Float.parseFloat(motherMonthlyExpense.getText()));
-        validateNativeTF(guardianFirstName, guardianFirstNameError);
-        orphan.getGuardian().setFirstName(guardianFirstName.getText());
-        validateNativeTF(guardianMiddleName, guardianMiddleNameError);
-        orphan.getGuardian().setMiddleName(guardianMiddleName.getText());
-        validateNativeTF(guardianLastName, guardianLastNameError);
-        orphan.getGuardian().setLastName(guardianLastName.getText());
-        validateNativeTF(guardianEmail, guardianEmailError);
-        orphan.getGuardian().setEmail(guardianEmail.getText());
-        validateNativeTF(guardianMobileNumber, guardianMobileNumberError);
-        orphan.getGuardian().setMobileNumber(guardianMobileNumber.getText());
-        validateNativeTF(guardianTelephoneNumber, guardianTelephoneNumberError);
-        orphan.getGuardian().setTelephoneNumber(guardianTelephoneNumber.getText());
+        if(
+        validateNativeDP(fatherDateOfBirth, fatherDateOfBirthError) &&
+        validateNativeDP(fatherDateOfDeath, fatherDateOfDeathError) &&
+        validateNativeTF(fatherCauseOfDeath, fatherCauseOfDeathError) &&
+        validateNativeTF(motherFirstName, motherFirstNameError) &&
+        validateNativeTF(motherMiddleName, motherMiddleNameError) &&
+        validateNativeTF(motherLastName, motherLastNameError) &&
+        validateNativeDP(motherDateOfBirth, motherDateOfBirthError) &&
+        validateNativeCB(motherVitalStatus, motherVitalStatusError) &&
+        validateNativeDP(motherDateOfDeath, motherDateOfDeathError) &&
+        validateNativeTF(motherCauseOfDeath, motherCauseOfDeathError) &&
+        validateNativeTF2(motherMobileNumber, motherMobileNumberError) &&
+        validateNativeCB(motherMaritalStatus, motherMaritalStatusError) &&
+        validateNativeTF2(motherMonthlyIncome, motherMonthlyIncomeError) &&
+        validateNativeTF2(motherMonthlyExpense, motherMonthlyExpenseError) &&
+        validateNativeTF(guardianFirstName, guardianFirstNameError) &&
+        validateNativeTF(guardianMiddleName, guardianMiddleNameError) &&
+        validateNativeTF(guardianLastName, guardianLastNameError) &&
+        validateNativeRB(GuardianGender, guardianGenderError) &&
+        validateNativeDP(guardianDateOfBirth, guardianDateOfBirthError) &&
+        validateNativeCB(guardianRelationToOrphan, guardianRelationToOrphanError) &&
+        validateNativeTF(guardianEmail, guardianEmailError) &&
+        validateNativeTF2(guardianMobileNumber, guardianMobileNumberError) &&
+        validateNativeTF2(guardianTelephoneNumber, guardianTelephoneNumberError) &&
+        validateNativeCB(guardianNationality, guardianNationalityError)
+        ){
+            orphan.getFather().setCauseOfDeath(fatherCauseOfDeath.getText());
+            orphan.getMother().setFirstName(motherFirstName.getText());
+            orphan.getMother().setMiddleName(motherMiddleName.getText());
+            orphan.getMother().setLastName(motherLastName.getText());
+            orphan.getMother().setCauseOfDeath(motherCauseOfDeath.getText());
+            orphan.getMother().setMobileNumber(motherMobileNumber.getText());
+            orphan.getMother().setMonthlyIncome(Float.parseFloat(motherMonthlyIncome.getText()));
+            orphan.getMother().setMonthlyExpense(Float.parseFloat(motherMonthlyExpense.getText()));
+            orphan.getGuardian().setFirstName(guardianFirstName.getText());
+            orphan.getGuardian().setMiddleName(guardianMiddleName.getText());
+            orphan.getGuardian().setLastName(guardianLastName.getText());
+            orphan.getGuardian().setEmail(guardianEmail.getText());
+            orphan.getGuardian().setMobileNumber(guardianMobileNumber.getText());
+            orphan.getGuardian().setTelephoneNumber(guardianTelephoneNumber.getText());
 
-        validateNativeRB(GuardianGender, guardianGenderError);
+            orphan.getGuardian().setGender(MaleGuardian.isSelected() ? Gender_enum.M : Gender_enum.F);
 
-        validateNativeCB(motherVitalStatus, motherVitalStatusError);
-        orphan.getMother().setVitalStatus(motherVitalStatus.getSelectionModel().getSelectedItem() == "Alive" ? Mother_vitalStatus_enum.ALIVE : Mother_vitalStatus_enum.PASSED );
-        validateNativeCB(motherMaritalStatus, motherMaritalStatusError);
-        orphan.getMother().setMaritalStatus(motherMaritalStatus.getSelectionModel().getSelectedItem() == "Married" ? Mother_maritalStatus_enum.MARRIED :
-                motherMaritalStatus.getSelectionModel().getSelectedItem().equals("Widow") ? Mother_maritalStatus_enum.WIDOW :
-                        Mother_maritalStatus_enum.N_A
+            orphan.getMother().setVitalStatus(motherVitalStatus.getSelectionModel().getSelectedItem() == "Alive" ? Mother_vitalStatus_enum.ALIVE : Mother_vitalStatus_enum.PASSED);
+            orphan.getMother().setMaritalStatus(motherMaritalStatus.getSelectionModel().getSelectedItem() == "Married" ? Mother_maritalStatus_enum.MARRIED :
+                    motherMaritalStatus.getSelectionModel().getSelectedItem().equals("Widow") ? Mother_maritalStatus_enum.WIDOW :
+                            Mother_maritalStatus_enum.N_A
+            );
+            orphan.getGuardian().setRelationToOrphan(guardianRelationToOrphan.getSelectionModel().getSelectedItem().equals("Mother") ? Guardian_relationToOrphan_enum.MOTHER :
+                    guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Brother" ? Guardian_relationToOrphan_enum.BROTHER :
+                            guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Sister" ? Guardian_relationToOrphan_enum.SISTER :
+                                    guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Aunt" ? Guardian_relationToOrphan_enum.AUNT :
+                                            guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Uncle" ? Guardian_relationToOrphan_enum.UNCLE :
+                                                    guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Grandfather" ? Guardian_relationToOrphan_enum.GRANDFATHER :
+                                                            guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Grandmother" ? Guardian_relationToOrphan_enum.GRANDMOTHER :
+                                                                    guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Niece" ? Guardian_relationToOrphan_enum.NIECE :
+                                                                            guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Nephew" ? Guardian_relationToOrphan_enum.NEPHEW :
+                                                                                    Guardian_relationToOrphan_enum.LEGALGUARDIAN
+            );
+            orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Djiboutian") ? Guardian_nationality_enum.DJIBOUTIAN :
+                    orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Ethiopian") ? Guardian_nationality_enum.ETHIOPIAN :
+                            orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Eritrean") ? Guardian_nationality_enum.ERITREAN :
+                                    orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Kenyan") ? Guardian_nationality_enum.KENYAN :
+                                            orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Somali") ? Guardian_nationality_enum.SOMALI :
+                                                    orphan.getGuardian().setNationality((guardianNationality.getSelectionModel().getSelectedItem().equals("Sudanese")) ? Guardian_nationality_enum.SUDANESE : Guardian_nationality_enum.SOUTH_SUDANESE))))));
+            orphan.getFather().setDateOfBirth(fatherDateOfBirth.getEditor().getText());
+            orphan.getFather().setDateOfDeath(fatherDateOfDeath.getEditor().getText());
+            orphan.getMother().setDateOfBirth(motherDateOfBirth.getEditor().getText());
+            orphan.getMother().setDateOfDeath(motherDateOfDeath.getEditor().getText());
+            orphan.getGuardian().setDateOfBirth(guardianDateOfBirth.getEditor().getText());
+        } else {
+            return;
+        }
+
+        System.out.println(
+                orphan.getFather().getCauseOfDeath()+","+
+                orphan.getMother().getFirstName()+","+
+                orphan.getMother().getMiddleName()+","+
+                orphan.getMother().getLastName()+","+
+                orphan.getMother().getCauseOfDeath()+","+
+                orphan.getMother().getMobileNumber()+","+
+                orphan.getMother().getMonthlyIncome()+","+
+                orphan.getMother().getMonthlyExpense()+","+
+                orphan.getGuardian().getFirstName()+","+
+                orphan.getGuardian().getMiddleName()+","+
+                orphan.getGuardian().getLastName()+","+
+                orphan.getGuardian().getEmail()+","+
+                orphan.getGuardian().getMobileNumber()+","+
+                orphan.getGuardian().getTelephoneNumber()+","+
+                orphan.getGuardian().getGender()+","+
+                orphan.getMother().getVitalStatus()+","+
+                orphan.getMother().getMaritalStatus()+","+
+                orphan.getGuardian().getRelationToOrphan()+","+
+                orphan.getGuardian().getNationality()+","+
+                orphan.getFather().getDateOfBirth()+","+
+                orphan.getFather().getDateOfDeath()+","+
+                orphan.getMother().getDateOfBirth()+","+
+                orphan.getMother().getDateOfDeath()+","+
+                orphan.getGuardian().getDateOfBirth()
         );
-        validateNativeCB(guardianRelationToOrphan, guardianRelationToOrphanError);
-        orphan.getGuardian().setRelationToOrphan(guardianRelationToOrphan.getSelectionModel().getSelectedItem().equals("Mother") ? Guardian_relationToOrphan_enum.MOTHER:
-                        guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Brother" ? Guardian_relationToOrphan_enum.BROTHER:
-                                guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Sister" ? Guardian_relationToOrphan_enum.SISTER:
-                                        guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Aunt" ? Guardian_relationToOrphan_enum.AUNT:
-                                                guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Uncle" ? Guardian_relationToOrphan_enum.UNCLE:
-                                                        guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Grandfather" ? Guardian_relationToOrphan_enum.GRANDFATHER:
-                                                                guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Grandmother" ? Guardian_relationToOrphan_enum.GRANDMOTHER:
-                                                                        guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Niece" ? Guardian_relationToOrphan_enum.NIECE:
-                                                                                guardianRelationToOrphan.getSelectionModel().getSelectedItem() == "Nephew" ? Guardian_relationToOrphan_enum.NEPHEW:
-                                                                                        Guardian_relationToOrphan_enum.LEGALGUARDIAN
-                );
-        validateNativeCB(guardianNationality, guardianNationalityError);
-        orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Djiboutian") ? Guardian_nationality_enum.DJIBOUTIAN:
-                orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Ethiopian") ? Guardian_nationality_enum.ETHIOPIAN:
-                        orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Eritrean") ? Guardian_nationality_enum.ERITREAN:
-                                orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Kenyan") ? Guardian_nationality_enum.KENYAN:
-                                        orphan.getGuardian().setNationality(guardianNationality.getSelectionModel().getSelectedItem().equals("Somali") ? Guardian_nationality_enum.SOMALI:
-                                                orphan.getGuardian().setNationality((guardianNationality.getSelectionModel().getSelectedItem().equals("Sudanese"))? Guardian_nationality_enum.SUDANESE: Guardian_nationality_enum.SOUTH_SUDANESE ))))));
-        validateNativeDP(fatherDateOfBirth, fatherDateOfBirthError);
-        orphan.getFather().setDateOfBirth(fatherDateOfBirth.getEditor().getText());
-        validateNativeDP(fatherDateOfDeath, fatherDateOfDeathError);
-        orphan.getFather().setDateOfDeath(fatherDateOfDeath.getEditor().getText());
-        validateNativeDP(motherDateOfBirth, motherDateOfBirthError);
-        orphan.getMother().setDateOfBirth(motherDateOfBirth.getEditor().getText());
-        validateNativeDP(motherDateOfDeath, motherDateOfDeathError);
-        orphan.getMother().setDateOfDeath(motherDateOfDeath.getEditor().getText());
-        validateNativeDP(guardianDateOfBirth, guardianDateOfBirthError);
-        orphan.getGuardian().setDateOfBirth(guardianDateOfBirth.getEditor().getText());
     }
 
-    // handles the Birth Certificate file picker
-    public void birthCertificateChooser(ActionEvent actionEvent) {
-        System.out.println("birthCertificateEvent...");
-        int orphanId = 7;
+    public void submitOrphanRegistrationForm() throws FileNotFoundException {
 
+        if (
+                validateFC(birthCertificateTF) &&
+                validateFC(portraitPhotoTF) &&
+                validateFC(longPhotoTF) &&
+                validateFC(fatherDeathCertificateTF) &&
+                validateFC(guardianConfirmationLetterTF) &&
+                validateFC(guardianIDCardTF)
+        ) {
+            String[] tempDateValues = orphan.getDateOfBirth().split("/");
+            String orphanDateOfBirth = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+            tempDateValues = orphan.getFather().getDateOfDeath().split("/");
+            String fatherDateOfDeath = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+            tempDateValues = orphan.getFather().getDateOfBirth().split("/");
+            String fatherDateOfBirth = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+            tempDateValues = orphan.getMother().getDateOfBirth().split("/");
+            String motherDateOfBirth = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+            tempDateValues = orphan.getMother().getDateOfDeath().split("/");
+            String motherDateOfDeath = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+            tempDateValues = orphan.getGuardian().getDateOfBirth().split("/");
+            String guardianDateOfBirth = tempDateValues[2]+"-"+tempDateValues[1]+"-"+tempDateValues[0];
+                Datasource.getInstance().insertOrphan(
+                        orphan.getFirstName(),
+                        orphan.getGender(),
+                        orphan.getPlaceOfBirth(),
+                        orphanDateOfBirth,
+                        orphan.getSpokenLanguages(),
+                        orphan.getReligion(),
+                        birthCertificateStream,
+                        orphan.getHealthDescription(),
+                        orphan.getPsychologicalStatus(),
+                        orphan.getFather().getFirstName(),
+                        3,
+                        orphan.getFather().getLastName(),
+                        fatherDateOfDeath,
+                        orphan.getFather().getCauseOfDeath(),
+                        fatherDateOfBirth,
+                        fatherDeathCertificateStream,
+                        orphan.getMother().getFirstName(),
+                        orphan.getMother().getMiddleName(),
+                        orphan.getMother().getLastName(),
+                        orphan.getMother().getVitalStatus(),
+                        motherDateOfBirth,
+                        motherDateOfDeath,
+                        orphan.getMother().getCauseOfDeath(),
+                        orphan.getMother().getMobileNumber(),
+                        orphan.getMother().getMaritalStatus(),
+                        orphan.getMother().getMonthlyIncome(),
+                        orphan.getMother().getMonthlyExpense(),
+                        orphan.getGuardian().getFirstName(),
+                        orphan.getGuardian().getMiddleName(),
+                        orphan.getGuardian().getLastName(),
+                        orphan.getGuardian().getGender(),
+                        guardianDateOfBirth,
+                        orphan.getGuardian().getRelationToOrphan(),
+                        orphan.getGuardian().getEmail(),
+                        orphan.getGuardian().getMobileNumber(),
+                        orphan.getGuardian().getTelephoneNumber(),
+                        orphan.getGuardian().getNationality(),
+                        guardianIDCardStream,
+                        guardianConfirmationLetterStream,
+                        orphan.getEducation().getEnrollmentStatus(),
+                        orphan.getEducation().getSchoolName(),
+                        orphan.getEducation().getTypeOfSchool(),
+                        orphan.getEducation().getYear(),
+                        orphan.getEducation().getLevel(),
+                        orphan.getEducation().getReason()
+                );
+        }
+
+    }
+
+    //-------------------------------------------------------------------------------
+
+    public File insertFile() throws FileNotFoundException {
         configureFileChooser(fileChooser);
-
         Stage stage = new Stage();
 
-        File file = fileChooser.showOpenDialog(stage);
+        return fileChooser.showOpenDialog(stage);
+    }
 
-        Datasource.getInstance().inputBirthCertificate(file, orphanId);
+    //-------------------------------------------------------------------------------
 
-        File output = Datasource.getInstance().outputBirthCertificate(orphanId);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+    // handles the Birth Certificate file picker
+    public void birthCertificateChooser() throws FileNotFoundException {
+//        System.out.println("birthCertificateEvent...");
+//        int orphanId = 7;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputBirthCertificate(file, orphanId);
+//
+//        File output = Datasource.getInstance().outputBirthCertificate(orphanId);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        birthCertificateTF.setText("Birth Certificate Inserted");
+        birthCertificateStream = stream;
     }
 
     // handles the Portrait Photo file picker
-    public void portraitPhotoChooser(ActionEvent actionEvent) {
+    public void portraitPhotoChooser() throws FileNotFoundException {
         System.out.println("portraitPhotoEvent...");
-
-        int id = 1;
-
-        configureFileChooser(fileChooser);
-
-        Stage stage = new Stage();
-
-        File file = fileChooser.showOpenDialog(stage);
-
-        Datasource.getInstance().inputPortraitPhoto(file, id);
-
-        File output = Datasource.getInstance().outputPortraitPhoto(id);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+//
+//        int id = 1;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputPortraitPhoto(file, id);
+//
+//        File output = Datasource.getInstance().outputPortraitPhoto(id);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        portraitPhotoTF.setText("Portrait Photo Inserted");
+        portraitPhotoStream = stream;
     }
 
     // handles the Long Photo file picker
-    public void longPhotoChooser(ActionEvent actionEvent) {
+    public void longPhotoChooser() throws FileNotFoundException {
         System.out.println("longPhotoEvent...");
-
-        int id = 1;
-
-        configureFileChooser(fileChooser);
-
-        Stage stage = new Stage();
-
-        File file = fileChooser.showOpenDialog(stage);
-
-        Datasource.getInstance().inputLongPhoto(file, id);
-
-        File output = Datasource.getInstance().outputLongPhoto(id);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+//
+//        int id = 1;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputLongPhoto(file, id);
+//
+//        File output = Datasource.getInstance().outputLongPhoto(id);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        longPhotoTF.setText("Long Photo Inserted");
+        longPhotoStream = stream;
     }
 
     // handles the  Father Death Certificate file picker
-    public void fatherDeathCertificateChooser(ActionEvent actionEvent) {
+    public void fatherDeathCertificateChooser() throws FileNotFoundException {
         System.out.println("fatherDeathCertificateEvent...");
-
-        int id = 2;
-
-        configureFileChooser(fileChooser);
-
-        Stage stage = new Stage();
-
-        File file = fileChooser.showOpenDialog(stage);
-
-        Datasource.getInstance().inputDeathCertificate(file, id);
-
-        File output = Datasource.getInstance().outputDeathCertificate(id);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+//
+//        int id = 2;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputDeathCertificate(file, id);
+//
+//        File output = Datasource.getInstance().outputDeathCertificate(id);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        fatherDeathCertificateTF.setText("Father Death Certificate Inserted");
+        fatherDeathCertificateStream = stream;
     }
 
     // handles the Guardian Confirmation Letter file picker
-    public void guardianConfirmationLetterChooser(ActionEvent actionEvent) {
+    public void guardianConfirmationLetterChooser() throws FileNotFoundException {
         System.out.println("guardianConfirmationLetterEvent...");
-
-        int id = 3;
-
-        configureFileChooser(fileChooser);
-
-        Stage stage = new Stage();
-
-        File file = fileChooser.showOpenDialog(stage);
-
-        Datasource.getInstance().inputConfirmationLetter(file, id);
-
-        File output = Datasource.getInstance().outputConfirmationLetter(id);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+//
+//        int id = 3;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputConfirmationLetter(file, id);
+//
+//        File output = Datasource.getInstance().outputConfirmationLetter(id);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        guardianConfirmationLetterTF.setText("Guardian Confirmation Letter Inserted");
+        guardianConfirmationLetterStream = stream;
     }
 
     // handles the Guardian ID Card file picker
-    public void guardianIDCardChooser(ActionEvent actionEvent) {
+    public void guardianIDCardChooser() throws FileNotFoundException {
         System.out.println("guardianIDCardEvent...");
-
-        int id = 3;
-
-        configureFileChooser(fileChooser);
-
-        Stage stage = new Stage();
-
-        File file = fileChooser.showOpenDialog(stage);
-
-        Datasource.getInstance().inputIDCard(file, id);
-
-        File output = Datasource.getInstance().outputIDCard(id);
-
-        if (output != null) {
-            openFile(output);
-            Label imgLabel = new Label();
-            imgLabel.setText(output.getAbsoluteFile().getName());
-            documentInfo.getChildren().add(imgLabel);
-        } else System.out.println("null");
+//
+//        int id = 3;
+//
+//        configureFileChooser(fileChooser);
+//
+//        Stage stage = new Stage();
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//
+//        Datasource.getInstance().inputIDCard(file, id);
+//
+//        File output = Datasource.getInstance().outputIDCard(id);
+//
+//        if (output != null) {
+//            openFile(output);
+//        } else System.out.println("null");
+        File stream = insertFile();
+        guardianIDCardTF.setText("Guardian ID Card Inserted");
+        guardianIDCardStream = stream;
     }
 
     // configuration file for the file choosers in the document section
@@ -792,6 +1058,7 @@ public class CoordinatorController implements Initializable {
 
     public void listOrphansByVillage(Village selectedVillage) {
         if (selectedVillage != null) {
+            this.setVillage(selectedVillage);
             Task<ObservableList<OrphanRow>> task = new Task<>() {
                 @Override
                 protected ObservableList<OrphanRow> call() {
